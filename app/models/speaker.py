@@ -15,3 +15,33 @@ class Speaker(db.Model):
  
     sessions: Mapped[List["Session"]] = relationship(secondary=session_speaker, back_populates="speakers")
     materials: Mapped[List["PresentationMaterial"]] = relationship(back_populates="speaker")
+    
+    @classmethod
+    def create(cls, full_name, biography, email, phone_number, profile_image):
+        speaker = cls(full_name=full_name,
+                      biography=biography,
+                      email=email,
+                      phone_number=phone_number,
+                      profile_image=profile_image)
+        db.session.add(speaker)
+        db.session.commit()
+        return speaker
+    
+    @classmethod
+    def get_by_id(cls, id):
+        return db.session.get(cls, id)
+    
+    def update(self, full_name=None, biography=None, email=None, phone_number=None, profile_image=None):
+        if full_name:
+            self.full_name = full_name
+        if biography:
+            self.biography = biography
+        if email:
+            self.email = email
+        if phone_number:
+            self.phone_number = phone_number
+        if profile_image:
+            self.profile_image = profile_image
+        
+        db.session.commit()
+        return self
