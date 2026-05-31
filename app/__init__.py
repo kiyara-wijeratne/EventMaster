@@ -5,9 +5,9 @@ from flask_sqlalchemy import SQLAlchemy
 
 from app.models import db
 
-def create_app():
+def create_app(config_filename='app.config.DevelopmentConfig'):
     app = Flask(__name__)
-    app.config.from_object('app.config.DevelopmentConfig')
+    app.config.from_object(config_filename)
     
     # bind database to app
     db.init_app(app)
