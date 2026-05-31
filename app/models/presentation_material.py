@@ -22,6 +22,10 @@ class PresentationMaterial(db.Model):
         return presentation_material
     
     @classmethod
+    def get_by_id(cls, id):
+        return db.session.get(cls, id)
+    
+    @classmethod
     def get_by_session_id(cls, session_id):
         return db.session.execute(db.select(cls).filter_by(session_id=session_id)).scalars().all()
     
