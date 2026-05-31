@@ -91,7 +91,7 @@ class Event(db.Model):
     def has_available_capacity(self):
         # validate no. approved attendees does not exceed capacity
         approved_registrations = [registration for registration in self.registrations 
-                                if registration.approval_status != "Approved"]
+                                if registration.approval_status == "Approved"]
         return len(approved_registrations) < self.capacity
     
     def delete(self):
