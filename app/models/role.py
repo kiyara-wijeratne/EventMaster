@@ -17,7 +17,7 @@ class Role(db.Model):
             raise ValueError(f"Role '{name}' already exists.")
         
         role = cls(name=name)
-        db.session.add(name)
+        db.session.add(role)
         db.session.commit()
         return role
     
