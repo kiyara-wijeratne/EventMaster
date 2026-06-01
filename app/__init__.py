@@ -4,6 +4,7 @@ from flask import Flask
 from flask_sqlalchemy import SQLAlchemy
 
 from app.models import db
+from app.controllers.auth import bp
 
 def create_app(config_filename='app.config.DevelopmentConfig'):
     app = Flask(__name__)
@@ -19,8 +20,6 @@ def create_app(config_filename='app.config.DevelopmentConfig'):
     with app.app_context():
         db.create_all()
     
-    @app.route('/')
-    def hello():
-        return "EventMaster"
+    app.register_blueprint(bp)
     
     return app
