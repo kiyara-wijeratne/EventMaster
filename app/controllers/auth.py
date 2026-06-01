@@ -13,7 +13,7 @@ def login():
         user = User.get_by_email(email)
         
         if user and user.verify_password(password):
-            return redirect(url_for('dashboard'))
+            return redirect(url_for('dashboard.index'))
         else:
             flash('Invalid email or password. Please try again.', 'error')
             

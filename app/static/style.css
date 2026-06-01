@@ -7,16 +7,21 @@
     width: 100%;
 }
 
+.title {
+    color: #0d3b1f
+}
+
 .green-btn {
-    background-color: #198754;
-    border-color: #198754;
+    background-color: #0d3b1f;
+    border-color: #0d3b1f;
     color: white;
     padding: 6px 32px;
     border-radius: 4px;
 }
 
 .green-btn:hover {
-    background-color: #146c43;
+    background-color: #061c0f;
+    border-color: #061c0f;
     color: white;
 }
 
@@ -26,4 +31,14 @@
     border: 1px solid #f9dbdf;
     border-radius: 4px;
     padding: 4px;
+}
+
+.nav-link.active-nav-link {
+    color: #0d3b1f;
+    font-weight: bold;
+}
+
+.nav-link.hover-nav-link:hover {
+    color: #0d3b1f;
+    background-color: #f8f9fa;
 }
