@@ -1,0 +1,28 @@
+.header {
+    background-color: #0d3b1f;
+    color: #ffffff;
+    font-weight: bold;
+    text-align: center;
+    padding: 12px 0;
+    width: 100%;
+}
+
+.green-btn {
+    background-color: #198754;
+    border-color: #198754;
+    color: white;
+    padding: 6px 32px;
+    border-radius: 4px;
+}
+
+.green-btn:hover {
+    background-color: #146c43;
+    color: white;
+}
+
+.error {
+    color: #a61c2e;
+    background-color: #fdf2f4;
+    border: 1px solid #f9dbdf;
+    border-radius: 4px;
+}

@@ -17,4 +17,4 @@ def login():
         else:
             flash('Invalid email or password. Please try again.', 'error')
             
-    render_template('auth/login.html')
+    return render_template('auth/login.html')

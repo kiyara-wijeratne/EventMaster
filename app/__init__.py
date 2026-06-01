@@ -1,6 +1,6 @@
 import os
 
-from flask import Flask
+from flask import Flask, redirect, url_for
 from flask_sqlalchemy import SQLAlchemy
 
 from app.models import db
@@ -21,5 +21,9 @@ def create_app(config_filename='app.config.DevelopmentConfig'):
         db.create_all()
     
     app.register_blueprint(bp)
+    
+    @app.route('/')
+    def index():
+        return redirect(url_for('auth.login'))
     
     return app
