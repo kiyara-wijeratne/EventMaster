@@ -3,5 +3,115 @@
 {% block page_title %}Events{% endblock %}
 
 {% block content %}
+{% if request.endpoint == 'events.index' %}
+{% if current_user.role.name == 'Organiser' %}
+<div class="pt-3 text-end">
+    <a class="btn green-btn" href="{{url_for('events.manage_event')}}" role="button">+ Create</a>
+</div>
+{%endif%}
+<div class="table-responsive pt-3">
+    <table class="table">
+        <thead>
+            <tr>
+                <th class="table-heading" scope="col">Name</th>
+                <th class="table-heading" scope="col">Date</th>
+                <th class="table-heading" scope="col">Pending Tasks</th>
+                {% if current_user.role.name == 'Organiser' %}
+                <th class="table-heading" scope="col">Actions</th>
+                {%endif%}
+            </tr>
+        </thead>
+        <tbody>
+            {% for event in all_events %}
+            <tr>
+                <td>{{ event.title }}</td>
+                <td>{{ event.event_start }}</td>
+                <td></td>
+                {% if current_user.role.name == 'Organiser' %}
+                <td>
+                    {% if event.organiser_id == current_user.id %}
+                    <a class="btn green-btn" href="{{url_for('events.manage_event', event_id=event.id)}}"
+                        role="button">Edit</a>
+                    {%endif%}
+                </td>
+                {%endif%}
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+{%endif%}
+{% if request.endpoint == 'events.manage_event' %}
+<div class="fluid-container pt-3">
+    <div class="d-flex justify-content-between align-items-center">
+        <h2 class="fw-bold title m-0">Manage Event Details</h2>
+        <a class="btn green-btn" href="{{ url_for('events.index') }}" role="button">← Back</a>
+    </div>
+</div>
+
+<div class="fluid-container">
+    <form action="{{ url_for('events.manage_event', event_id=event.id if event else None) }}" method="POST">
+        <div class="py-2">
+            <h3 class="title">Logistical</h3>
+
+            <div class="form-group row">
+
+                <div class="col-md-4">
+                    <label class="form-label">Title</label>
+                    <input type="text" class="form-control" name="title" value="{{ event.title if event else '' }}"
+                        required>
+                </div>
+
+                {% if not event %}
+                <div class="col-md-4">
+                    <label class="form-label">Type</label>
+                    <select class="form-select" name="event_type_id" required>
+                        {% for event_type in all_event_types %}
+                        <option value="{{ event_type.id }}">{{ event_type.name }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+                {% endif %}
+
+                <div class="col-md-4">
+                    <label class="form-label">Venue</label>
+                    <input type="text" class="form-control" name="venue" value="{{ event.venue if event else '' }}"
+                        required>
+                </div>
+
+                <div class="col-md-4">
+                    <label class="form-label">Capacity</label>
+                    <input type="number" class="form-control" name="capacity" min="1"
+                        value="{{ event.capacity if event else '' }}" required>
+                </div>
+
+                <div class="col-md-4">
+                    <label class="form-label">Event Start</label>
+                    <input type="datetime-local" class="form-control" name="event_start"
+                        value="{{ event.event_start.strftime('%Y-%m-%dT%H:%M') if event else '' }}" required>
+                </div>
+
+                <div class="col-md-4">
+                    <label class="form-label">Event End</label>
+                    <input type="datetime-local" class="form-control" name="event_end"
+                        value="{{ event.event_end.strftime('%Y-%m-%dT%H:%M') if event else '' }}" required>
+                </div>
+            </div>
+        </div>
+        <div class="pt-4">
+            {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+            {% for category, message in messages %}
+            <p class="{{ category }} small">{{ message }}</p>
+            {% endfor %}
+            {% endif %}
+            {% endwith %}
+        </div>
+        <div class="pt-3 text-end">
+            <button type="submit" class="btn green-btn">Save</button>
+        </div>
+    </form>
+</div>
+{% endif %}
 
 {% endblock %}
