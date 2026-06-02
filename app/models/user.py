@@ -2,10 +2,11 @@ from typing import List
 from sqlalchemy import String, ForeignKey
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 from werkzeug.security import generate_password_hash, check_password_hash
+from flask_login import UserMixin
 
 from app.models import db
  
-class User(db.Model):
+class User(db.Model, UserMixin): # implements necessary methods for flask_login
     id: Mapped[int] = mapped_column(primary_key=True)
     email: Mapped[str] = mapped_column(String(255), unique=True)
     password_hash: Mapped[str] = mapped_column(String(255))
@@ -35,6 +36,10 @@ class User(db.Model):
     @classmethod
     def get_by_id(cls, id):
         return db.session.get(cls, id)
+    
+    @classmethod
+    def get_by_name(cls, name):
+        return db.session.execute(db.select(cls).filter_by(full_name=name)).scalar_one_or_none()
     
     @classmethod
     def get_by_email(cls, email):
