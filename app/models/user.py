@@ -38,10 +38,6 @@ class User(db.Model, UserMixin): # implements necessary methods for flask_login
         return db.session.get(cls, id)
     
     @classmethod
-    def get_by_name(cls, name):
-        return db.session.execute(db.select(cls).filter_by(full_name=name)).scalar_one_or_none()
-    
-    @classmethod
     def get_by_email(cls, email):
         return db.session.execute(db.select(cls).filter_by(email=email)).scalar_one_or_none()
     

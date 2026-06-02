@@ -13,10 +13,12 @@
 
 .green-btn {
     background-color: #0d3b1f;
-    border-color: #0d3b1f;
+    border: 1px solid #0d3b1f;
     color: white;
     padding: 6px 32px;
     border-radius: 4px;
+    box-shadow: none;
+    outline: none;
 }
 
 .green-btn:hover {
@@ -33,12 +35,35 @@
     padding: 4px;
 }
 
-.nav-link.active-nav-link {
+.success {
     color: #0d3b1f;
+    background-color: #e6f0ea;
+    border: 1px solid #bcd0c3;
+    border-radius: 4px;
+    padding: 4px;
+}
+
+.nav-link.active-nav-link {
+    color: #0d3b1f !important;
+    border-bottom-color: #0d3b1f !important;
     font-weight: bold;
 }
 
 .nav-link.hover-nav-link:hover {
     color: #0d3b1f;
     background-color: #f8f9fa;
+}
+
+.nav-underline .nav-link {
+    color: #6c757d;
+}
+
+label {
+    color: #0d3b1f;
+    font-weight: 600;
+}
+
+.table th.table-heading {
+    color: #0d3b1f;
+    font-weight: 600;
 }

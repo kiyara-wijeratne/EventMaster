@@ -1,5 +1,5 @@
 from functools import wraps 
-from flask import Blueprint, flash, g, redirect, render_template, request, session, url_for, abort
+from flask import Blueprint, flash, redirect, render_template, request, url_for, abort
 from flask_login import current_user, login_user
 from app.models.user import User
 
@@ -25,7 +25,7 @@ def role_required(*roles):
     def wrapper(func):
         @wraps(func)
         def decorated_view(*args, **kwargs):
-            if current_user.role not in roles:
+            if current_user.role.name not in roles:
                 return abort(403)  # Forbidden access
             return func(*args, **kwargs)
         return decorated_view

@@ -1,8 +1,101 @@
-{% extends "base.html" %}
+{% extends 'base.html' %}
 
 {% block page_title %}Settings{% endblock %}
 
-
 {% block content %}
 
+<div class="container-fluid p-0">
+
+    <ul class="nav nav-underline pt-3">
+        <li class="nav-item">
+            <a class="nav-link {% if request.endpoint == 'settings.account' %} active active-nav-link {% endif %}"
+                href="{{ url_for('settings.account') }}">
+                Account Details
+            </a>
+        </li>
+        {% if current_user.role.name == 'Administrator' %}
+        <li class="nav-item">
+            <a class="nav-link {% if request.endpoint == 'settings.permissions' %} active active-nav-link {% endif %}"
+                href="{{ url_for('settings.permissions') }}">
+                Manage User Permissions
+            </a>
+        </li>
+        {% endif %}
+    </ul>
+
+    {% if request.endpoint == 'settings.account' %}
+    <form class="pt-3">
+        <div class="form-group row">
+            <label for="staticName" class="col-sm-1 col-form-label">Name</label>
+            <div class="col-sm-11">
+                <input type="text" readonly class="form-control-plaintext" id="staticName"
+                    value="{{ current_user.full_name }}">
+            </div>
+        </div>
+        <div class="form-group row">
+            <label for="staticEmail" class="col-sm-1 col-form-label">Email</label>
+            <div class="col-sm-11">
+                <input type="text" readonly class="form-control-plaintext" id="staticEmail"
+                    value="{{ current_user.email }}">
+            </div>
+        </div>
+        <div class="form-group row">
+            <label for="staticRole" class="col-sm-1 col-form-label">Role</label>
+            <div class="col-sm-11">
+                <input type="text" readonly class="form-control-plaintext" id="staticEmail"
+                    value="{{ current_user.role.name }}">
+            </div>
+        </div>
+    </form>
+    {% endif %}
+
+    {% if request.endpoint == 'settings.permissions' %}
+    <div class="table-responsive pt-3">
+        <table class="table">
+            <thead>
+                <tr>
+                    <th class="table-heading" scope="col">Name</th>
+                    <th class="table-heading" scope="col">Email</th>
+                    <th class="table-heading" scope="col">Role</th>
+                    <th class="table-heading" scope="col">Action</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for user in all_users %}
+                <tr>
+                    <td>{{ user.full_name }}</td>
+                    <td>{{ user.email }}</td>
+                    <td>
+                        <select name="role_id" form="form-{{ user.id }}" class="form-select">
+                            {% for role in all_roles %}
+                            <option value="{{ role.id }}" {% if user.role.id==role.id %}selected{% endif %}>
+                                {{ role.name }}
+                            </option>
+                            {% endfor %}
+                        </select>
+                    </td>
+                    <td>
+                        <form id="form-{{ user.id }}" action="{{ url_for('settings.permissions') }}" method="POST">
+                            <input type="hidden" name="user_id" value="{{ user.id }}">
+                            <button type="submit" class="green-btn">Save</button>
+                        </form>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+
+    {% with messages = get_flashed_messages(with_categories=true) %}
+    {% if messages %}
+    <div class=flashes>
+        {% for category, message in messages %}
+        <p class="{{ category }} small">{{ message }}</p>
+        {% endfor %}
+    </div>
+    {% endif %}
+    {% endwith %}
+
+    {% endif %}
+</div>
 {% endblock %}

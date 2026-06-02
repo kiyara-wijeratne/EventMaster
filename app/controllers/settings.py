@@ -1,9 +1,40 @@
 from flask import Blueprint, flash, g, redirect, render_template, request, session, url_for
+from flask_login import login_required
 from sqlalchemy import func
+
 from app.models import db
+from app.models.user import User
+from app.models.role import Role
 
-settings_bp = Blueprint('settings', __name__)
+from app.controllers.auth import role_required
 
-@settings_bp.route('/settings')
-def index():
+settings_bp = Blueprint('settings', __name__, url_prefix='/settings')
+
+@settings_bp.route('/account')
+@login_required
+def account():
     return render_template('settings.html')
+
+@settings_bp.route('/permissions', methods=('GET', 'POST'))
+@login_required
+@role_required('Administrator')
+def permissions():
+    if request.method == 'POST':
+        user_id = request.form['user_id']
+        role_id = request.form['role_id']
+        
+        user = User.get_by_id(user_id)
+        
+        if user:
+            user.assign_role(role_id)
+            flash(f"Updated {user.full_name}'s role successfully", 'success')
+        else:
+            flash('User or role could not be verified. Please try again.', 'error')
+        
+        return redirect(url_for('settings.permissions'))
+    
+    # get all users and all roles to populate the dropdown
+    all_users = User.query.all()
+    all_roles = Role.query.all()
+    
+    return render_template('settings.html', all_users=all_users, all_roles=all_roles)
