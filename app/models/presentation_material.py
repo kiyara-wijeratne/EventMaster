@@ -18,7 +18,7 @@ class PresentationMaterial(db.Model):
                                     session_id=session_id,
                                     file_path=file_path)
         db.session.add(presentation_material)
-        db.session.commit
+        db.session.commit()
         return presentation_material
     
     @classmethod

@@ -26,12 +26,39 @@
             <tr>
                 <td>{{ event.title }}</td>
                 <td>{{ event.event_start }}</td>
-                <td></td>
+                <td>
+                    {% set tasks = [] %}
+                    {% if not event.branding %}
+                    {% set _ = tasks.append('Add Branding') %}
+                    {% endif %}
+                    {% if not event.ticket_types %}
+                    {% set _ = tasks.append('Add Ticket Types') %}
+                    {% endif %}
+                    {% if not event.sessions %}
+                    {% set _ = tasks.append('Add Sessions') %}
+                    {% endif %}
+                    {% if tasks %}
+                    <ul>
+                        {% for task in tasks %}
+                        <li>{{ task }}</li>
+                        {% endfor %}
+                    </ul>
+                    {%endif%}
+
+                </td>
                 {% if current_user.role.name == 'Organiser' %}
                 <td>
                     {% if event.organiser_id == current_user.id %}
                     <a class="btn green-btn" href="{{url_for('events.manage_event', event_id=event.id)}}"
                         role="button">Edit</a>
+                    <div class="pt-3">
+                        <form method="POST" action="{{ url_for('events.index') }}"
+                            onsubmit="return confirm('Are you sure you want to completely delete this event? \nThis action cannot be undone.');">
+                            <input type="hidden" name="event_id" value="{{ event.id }}">
+                            <button type="submit" class="btn red-btn">Delete</button>
+                        </form>
+                    </div>
+
                     {%endif%}
                 </td>
                 {%endif%}
@@ -40,7 +67,17 @@
         </tbody>
     </table>
 </div>
+<div class="pt-3">
+    {% with messages = get_flashed_messages(with_categories=true) %}
+    {% if messages %}
+    {% for category, message in messages %}
+    <p class="{{ category }} small">{{ message }}</p>
+    {% endfor %}
+    {% endif %}
+    {% endwith %}
+</div>
 {%endif%}
+
 {% if request.endpoint == 'events.manage_event' %}
 <div class="fluid-container pt-3">
     <div class="d-flex justify-content-between align-items-center">
@@ -49,13 +86,13 @@
     </div>
 </div>
 
-<div class="fluid-container">
-    <form action="{{ url_for('events.manage_event', event_id=event.id if event else None) }}" method="POST">
-        <div class="py-2">
-            <h3 class="title">Logistical</h3>
+<div class="pt-3">
+    <h3 class="title">Logistical Details</h3>
+    <form method="POST" enctype="multipart/form-data">
+        <input type="hidden" name="action" value="save_event">
 
-            <div class="form-group row">
-
+        <div class="form-group row">
+            <div class="row">
                 <div class="col-md-4">
                     <label class="form-label">Title</label>
                     <input type="text" class="form-control" name="title" value="{{ event.title if event else '' }}"
@@ -66,8 +103,10 @@
                 <div class="col-md-4">
                     <label class="form-label">Type</label>
                     <select class="form-select" name="event_type_id" required>
-                        {% for event_type in all_event_types %}
-                        <option value="{{ event_type.id }}">{{ event_type.name }}</option>
+
+                        {% for type in all_event_types %}
+                        <option value="{{ type.id }}">{{ type.name }}</option>
+
                         {% endfor %}
                     </select>
                 </div>
@@ -81,37 +120,336 @@
 
                 <div class="col-md-4">
                     <label class="form-label">Capacity</label>
-                    <input type="number" class="form-control" name="capacity" min="1"
+                    <input type="number" class="form-control" name="capacity"
                         value="{{ event.capacity if event else '' }}" required>
                 </div>
 
                 <div class="col-md-4">
-                    <label class="form-label">Event Start</label>
+                    <label class="form-label">Start</label>
                     <input type="datetime-local" class="form-control" name="event_start"
                         value="{{ event.event_start.strftime('%Y-%m-%dT%H:%M') if event else '' }}" required>
                 </div>
 
                 <div class="col-md-4">
-                    <label class="form-label">Event End</label>
+                    <label class="form-label">End</label>
                     <input type="datetime-local" class="form-control" name="event_end"
                         value="{{ event.event_end.strftime('%Y-%m-%dT%H:%M') if event else '' }}" required>
                 </div>
+
             </div>
         </div>
-        <div class="pt-4">
-            {% with messages = get_flashed_messages(with_categories=true) %}
-            {% if messages %}
-            {% for category, message in messages %}
-            <p class="{{ category }} small">{{ message }}</p>
-            {% endfor %}
-            {% endif %}
-            {% endwith %}
+</div>
+<div class="pt-3 text-end">
+    <button type="submit" class="btn green-btn">Save Event</button>
+</div>
+</form>
+
+
+{% if event %}
+
+<div class="fluid-cotainer pt-3">
+    <div class="d-flex justify-content-between align-items-center">
+        <h3 class="title">Branding</h3>
+        {% if event_branding %}
+        <form method="POST">
+            <input type="hidden" name="action" value="delete_branding">
+            <button class="btn red-btn text-end">Delete Branding</button>
+        </form>
+    </div>
+    <form method="POST">
+        <input type="hidden" name="action" value="update_branding">
+
+        <div class="form-group row">
+            <div class="col-md-4">
+                <label class="form-label">Logo Path</label>
+                <input type="text" class="form-control" name="logo_path" value="{{ event_branding.logo_path }}"
+                    required>
+            </div>
+
+            <div class="col-md-4">
+                <label class="form-label">Primary Colour</label>
+                <input type="text" class="form-control" name="primary_colour"
+                    value="{{ event_branding.primary_colour }}" required>
+            </div>
+
+            <div class="col-md-4">
+                <label class="form-label">Secondary Colour</label>
+                <input type="text" class="form-control" name="secondary_colour"
+                    value="{{ event_branding.secondary_colour }}" required>
+            </div>
+
         </div>
+
         <div class="pt-3 text-end">
-            <button type="submit" class="btn green-btn">Save</button>
+            <button class="btn green-btn">Save Branding</button>
         </div>
     </form>
+
+    {% else %}
+</div>
+<form method="POST">
+    <input type="hidden" name="action" value="create_branding">
+
+    <div class="form-group row">
+        <div class="col-md-4">
+            <label class="form-label">Logo Path</label>
+            <input class="form-control" name="logo_path" placeholder="Logo Path" required>
+        </div>
+
+        <div class="col-md-4">
+            <label class="form-label">Primary Colour</label>
+            <input class="form-control" name="primary_colour" placeholder="#000000" required>
+        </div>
+
+        <div class="col-md-4">
+            <label class="form-label">Secondary Colour</label>
+            <input class="form-control" name="secondary_colour" placeholder="#FFFFFF" required>
+        </div>
+
+    </div>
+    <div class="pt-3 text-end">
+        <button class="btn green-btn">Save Branding</button>
+    </div>
+</form>
+{% endif %}
+</div>
+
+
+<div class="fluid-container pt-3">
+    <h3 class="title">Ticket Types</h3>
+    {% for ticket in event.ticket_types %}
+    <div class="d=flex justify-content-end text-end">
+        <form method="POST">
+            <input type="hidden" name="action" value="delete_ticket">
+            <input type="hidden" name="ticket_id" value="{{ ticket.id }}">
+            <button class="btn red-btn">Delete Ticket</button>
+        </form>
+    </div>
+
+
+    <form method="POST">
+        <input type="hidden" name="action" value="update_ticket">
+        <input type="hidden" name="ticket_id" value="{{ ticket.id }}">
+
+        <div class="form-group row">
+
+            <div class="col-md-4">
+                <label class="form-label">Name</label>
+                <input class="form-control" name="name" value="{{ ticket.name }}" required>
+            </div>
+
+            <div class="col-md-4">
+                <label class="form-label">Quantity</label>
+                <input type="number" class="form-control" name="max_quantity" value="{{ ticket.max_quantity }}"
+                    required>
+            </div>
+
+            <div class="col-md-4">
+                <label class="form-label">Price</label>
+                <input type="number" class="form-control" name="price" value="{{ ticket.price }}" required>
+            </div>
+
+            <div class="col-md-4">
+                <label class="form-label">Sales Start</label>
+                <input type="datetime-local" class="form-control" name="sales_start"
+                    value="{{ ticket.sales_start.strftime('%Y-%m-%dT%H:%M') }}" required>
+            </div>
+
+            <div class="col-md-4">
+                <label class="form-label">Sales End</label>
+                <input type="datetime-local" class="form-control" name="sales_end"
+                    value="{{ ticket.sales_end.strftime('%Y-%m-%dT%H:%M') }}" required>
+            </div>
+        </div>
+
+        <div class="pt-3 text-end">
+            <button class="btn green-btn">Save Ticket</button>
+        </div>
+    </form>
+    {% endfor %}
+
+    <div>
+        <button type="button" class="btn btn-outline-success" id="show-ticket-form-btn"
+            style="display: {{ 'inline-block' if event.ticket_types else 'none'}} " onclick="document.getElementById('create_ticket_section').style.display='block';
+        this.style.display='none';">+ Add New Ticket Type</button>
+    </div>
+
+    <div id="create_ticket_section" style="display: {{ 'none' if event.ticket_types else 'block' }}">
+        <form method="POST">
+            <input type="hidden" name="action" value="create_ticket">
+
+            <div class="form-group row">
+                <div class="col-md-4">
+                    <label class="form-label">Name</label>
+                    <input class="form-control" name="name" placeholder="Ticket Name" required>
+                </div>
+
+                <div class="col-md-4">
+                    <label class="form-label">Quantity</label>
+                    <input type="number" class="form-control" name="max_quantity" placeholder="Quantity" required>
+                </div>
+
+                <div class="col-md-4">
+                    <label class="form-label">Price</label>
+                    <input type="number" class="form-control" name="price" placeholder="Price" required>
+                </div>
+
+                <div class="col-md-4">
+                    <label class="form-label">Sales Start</label>
+                    <input type="datetime-local" class="form-control" name="sales_start" required>
+                </div>
+
+                <div class="col-md-4">
+                    <label class="form-label">Sales End</label>
+                    <input type="datetime-local" class="form-control" name="sales_end" required>
+                </div>
+            </div>
+
+            <div class="pt-3 text-end">
+                {% if event.ticket_types %}
+                <button type="button" class="btn red-btn"
+                    onclick="document.getElementById('create_ticket_section').style.display='none'; document.getElementById('show-ticket-form-btn').style.display='inline-block';">Cancel</button>
+                {%endif%}
+                <button class="btn green-btn">Save Ticket</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<div class="fluid-container pt-3">
+    <h3 class="title">Sessions</h3>
+    {% for session in event.sessions %}
+    <div class="d=flex justify-content-end text-end">
+        <form method="POST" class="pt-3 text-end">
+            <input type="hidden" name="action" value="delete_session">
+            <input type="hidden" name="session_id" value="{{ session.id }}">
+            <button class="btn red-btn">Delete Session</button>
+        </form>
+    </div>
+    <form method="POST">
+        <input type="hidden" name="action" value="update_session">
+        <input type="hidden" name="session_id" value="{{ session.id }}">
+
+        <div class="form-group row">
+            <div class="col-md-3">
+                <label class="form-label">Title</label>
+                <input class="form-control" name="title" value="{{ session.title }}" required>
+            </div>
+
+            <div class="col-md-3">
+                <label class="form-label">Room</label>
+                <input class="form-control" name="room" value="{{ session.room }}" required>
+            </div>
+
+            <div class="col-md-3">
+                <label class="form-label">Start</label>
+                <input type="datetime-local" class="form-control" name="session_start"
+                    value="{{ session.session_start.strftime('%Y-%m-%dT%H:%M') }}" required>
+            </div>
+
+            <div class="col-md-3">
+                <label class="form-label">End</label>
+                <input type="datetime-local" class="form-control" name="session_end"
+                    value="{{ session.session_end.strftime('%Y-%m-%dT%H:%M') }}" required>
+            </div>
+
+            <div class="col-md-3">
+                <label class="form-label">Speaker</label>
+                <select class="form-select" name="speaker_id">
+                    {% for speaker in all_speakers %}
+                    <option value="{{ speaker.id }}" {% if session.speakers and session.speakers[0].id==speaker.id %}
+                        selected {% endif %}>
+                        {{ speaker.full_name }}
+                    </option>
+                    {% endfor %}
+                </select>
+            </div>
+
+            {% if session.speaker_id %}
+            <div class="col-md-3">
+                <label class="form-label">Presentation Material</label>
+                <input type="text" class="form-control" name="file_path" placeholder="Enter file path/URL">
+            </div>
+            {% endif %}
+        </div>
+
+        <div class="pt-3 text-end">
+            <button class="btn green-btn">Save Session</button>
+        </div>
+    </form>
+
+    {% endfor %}
+
+    <div>
+        <button type="button" class="btn btn-outline-success" id="show-session-form-btn"
+            style="display: {{ 'inline-block' if event.sessions else 'none'}} " onclick="document.getElementById('create_session_section').style.display='block';
+        this.style.display='none';">+ Add New Session</button>
+    </div>
+
+    <div id="create_session_section" style="display: {{ 'none' if event.sessions else 'block' }}">
+        <form method="POST">
+            <input type="hidden" name="action" value="create_session">
+
+            <div class="from-group row">
+                <div class="col-md-3">
+                    <label class="form-label">Title</label>
+                    <input class="form-control" name="title" placeholder="Session Title" required>
+                </div>
+
+                <div class="col-md-3">
+                    <label class="form-label">Room</label>
+                    <input class="form-control" name="room" placeholder="Room" required>
+                </div>
+
+                <div class="col-md-3">
+                    <label class="form-label">Start</label>
+                    <input type="datetime-local" class="form-control" name="session_start" required>
+                </div>
+
+                <div class="col-md-3">
+                    <label class="form-label">End</label>
+                    <input type="datetime-local" class="form-control" name="session_end" required>
+                </div>
+
+                <div class="cold-md-3">
+                    <label class="form-label">Assign Speaker</label>
+                    <select class="form-select" name="speaker_id">
+                        {% for speaker in all_speakers %}
+                        <option value="{{ speaker.id }}">{{ speaker.full_name }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+
+                {% if session.speakers %}
+                <div class="col-md-3">
+                    <label class="form-label">Presentation Material</label>
+                    <input type="text" class="form-control" name="file_path" placeholder="Enter file path/URL">
+                </div>
+                {% endif %}
+            </div>
+
+            <div class="pt-3 text-end">
+                {% if event.session %}
+                <button type="button" class="btn red-btn"
+                    onclick="document.getElementById('create_session_section').style.display='none'; document.getElementById('show-session-form-btn').style.display='inline-block';">Cancel</button>
+                {%endif%}
+                <button class="btn green-btn">Save Session</button>
+            </div>
+        </form>
+    </div>
+</div>
 </div>
 {% endif %}
+{% endif %}
+
+<div class="pt-3">
+    {% with messages = get_flashed_messages(with_categories=true) %}
+    {% if messages %}
+    {% for category, message in messages %}
+    <p class="{{ category }} small">{{ message }}</p>
+    {% endfor %}
+    {% endif %}
+    {% endwith %}
+</div>
 
 {% endblock %}

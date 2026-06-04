@@ -27,6 +27,23 @@
     color: white;
 }
 
+.red-btn {
+    background-color: #a61c2e;
+    border: 1px solid #a61c2e;
+    color: white;
+    padding: 6px 32px;
+    border-radius: 4px;
+    box-shadow: none;
+    outline: none;
+}
+
+.red-btn:hover {
+    background-color: #a61c2eac;
+    border-color: #a61c2eac;
+    color: white;
+}
+
+
 .error {
     color: #a61c2e;
     background-color: #fdf2f4;
