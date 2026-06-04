@@ -83,50 +83,47 @@
         <input type="hidden" name="action" value="save_event">
 
         <div class="form-group row">
-            <div class="row">
-                <div class="col-md-4">
-                    <label class="form-label">Title</label>
-                    <input type="text" class="form-control" name="title" value="{{ event.title if event else '' }}"
-                        required>
-                </div>
+            <div class="col-md-4">
+                <label class="form-label">Title</label>
+                <input type="text" class="form-control" name="title" value="{{ event.title if event else '' }}"
+                    required>
+            </div>
 
-                {% if not event %}
-                <div class="col-md-4">
-                    <label class="form-label">Type</label>
-                    <select class="form-select" name="event_type_id" required>
+            {% if not event %}
+            <div class="col-md-4">
+                <label class="form-label">Type</label>
+                <select class="form-select" name="event_type_id" required>
 
-                        {% for type in all_event_types %}
-                        <option value="{{ type.id }}">{{ type.name }}</option>
+                    {% for type in all_event_types %}
+                    <option value="{{ type.id }}">{{ type.name }}</option>
 
-                        {% endfor %}
-                    </select>
-                </div>
-                {% endif %}
+                    {% endfor %}
+                </select>
+            </div>
+            {% endif %}
 
-                <div class="col-md-4">
-                    <label class="form-label">Venue</label>
-                    <input type="text" class="form-control" name="venue" value="{{ event.venue if event else '' }}"
-                        required>
-                </div>
+            <div class="col-md-4">
+                <label class="form-label">Venue</label>
+                <input type="text" class="form-control" name="venue" value="{{ event.venue if event else '' }}"
+                    required>
+            </div>
 
-                <div class="col-md-4">
-                    <label class="form-label">Capacity</label>
-                    <input type="number" class="form-control" name="capacity"
-                        value="{{ event.capacity if event else '' }}" required>
-                </div>
+            <div class="col-md-4">
+                <label class="form-label">Capacity</label>
+                <input type="number" class="form-control" name="capacity" value="{{ event.capacity if event else '' }}"
+                    required>
+            </div>
 
-                <div class="col-md-4">
-                    <label class="form-label">Start</label>
-                    <input type="datetime-local" class="form-control" name="event_start"
-                        value="{{ event.event_start.strftime('%Y-%m-%dT%H:%M') if event else '' }}" required>
-                </div>
+            <div class="col-md-4">
+                <label class="form-label">Start</label>
+                <input type="datetime-local" class="form-control" name="event_start"
+                    value="{{ event.event_start.strftime('%Y-%m-%dT%H:%M') if event else '' }}" required>
+            </div>
 
-                <div class="col-md-4">
-                    <label class="form-label">End</label>
-                    <input type="datetime-local" class="form-control" name="event_end"
-                        value="{{ event.event_end.strftime('%Y-%m-%dT%H:%M') if event else '' }}" required>
-                </div>
-
+            <div class="col-md-4">
+                <label class="form-label">End</label>
+                <input type="datetime-local" class="form-control" name="event_end"
+                    value="{{ event.event_end.strftime('%Y-%m-%dT%H:%M') if event else '' }}" required>
             </div>
         </div>
         <div class="pt-3 text-end">
@@ -345,6 +342,7 @@
                 <label class="form-label">Speaker</label>
                 <select class="form-select" name="speaker_id">
                     {% for speaker in all_speakers %}
+                    <option value="">Select Speaker (None)</option>
                     <option value="{{ speaker.id }}" {% if session.speakers and session.speakers[0].id==speaker.id %}
                         selected {% endif %}>
                         {{ speaker.full_name }}
@@ -402,6 +400,7 @@
                 <div class="cold-md-3">
                     <label class="form-label">Assign Speaker</label>
                     <select class="form-select" name="speaker_id">
+                        <option value="">Select Speaker (None)</option>
                         {% for speaker in all_speakers %}
                         <option value="{{ speaker.id }}">{{ speaker.full_name }}</option>
                         {% endfor %}

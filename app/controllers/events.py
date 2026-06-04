@@ -30,6 +30,7 @@ def index():
         else:
             flash('Event not found.', 'error')
         
+        return redirect(url_for('events.index'))
     
     all_events = Event.query.all() 
     return render_template('events.html', all_events=all_events)
