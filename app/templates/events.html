@@ -67,15 +67,6 @@
         </tbody>
     </table>
 </div>
-<div class="pt-3">
-    {% with messages = get_flashed_messages(with_categories=true) %}
-    {% if messages %}
-    {% for category, message in messages %}
-    <p class="{{ category }} small">{{ message }}</p>
-    {% endfor %}
-    {% endif %}
-    {% endwith %}
-</div>
 {%endif%}
 
 {% if request.endpoint == 'events.manage_event' %}

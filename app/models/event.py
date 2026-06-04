@@ -104,5 +104,5 @@ class Event(db.Model):
                              f"There are {len(active_registrations)} active registrations to it."
                              "You must cancel all attendee registrations before deleting the event.")
             
-        db.session.delete()
+        db.session.delete(self)
         db.session.commit()
