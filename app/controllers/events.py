@@ -99,7 +99,7 @@ def manage_event():
                 
             if event:
                 # redirect so user can continue editing
-                return redirect(url_for('events.manage_event'), event_id=event.id)
+                return redirect(url_for('events.manage_event', event_id=event.id))
             else:
                 return redirect(url_for('events.index'))
                 
@@ -177,7 +177,7 @@ def update_ticket():
     
     if ticket:   
         ticket.update(name=request.form['name'],
-                    max_quantity=request.form['max_quantity'],
+                    max_quantity=int(request.form['max_quantity']),
                     sales_start=datetime.fromisoformat(request.form['sales_start']),
                     sales_end=datetime.fromisoformat(request.form['sales_end']),
                     price=int(request.form['price']))

@@ -138,12 +138,11 @@
 
             </div>
         </div>
+        <div class="pt-3 text-end">
+            <button type="submit" class="btn green-btn">Save Event</button>
+        </div>
+    </form>
 </div>
-<div class="pt-3 text-end">
-    <button type="submit" class="btn green-btn">Save Event</button>
-</div>
-</form>
-
 
 {% if event %}
 
@@ -186,32 +185,31 @@
     </form>
 
     {% else %}
-</div>
-<form method="POST">
-    <input type="hidden" name="action" value="create_branding">
+    <form method="POST">
+        <input type="hidden" name="action" value="create_branding">
 
-    <div class="form-group row">
-        <div class="col-md-4">
-            <label class="form-label">Logo Path</label>
-            <input class="form-control" name="logo_path" placeholder="Logo Path" required>
+        <div class="form-group row">
+            <div class="col-md-4">
+                <label class="form-label">Logo Path</label>
+                <input class="form-control" name="logo_path" placeholder="Logo Path" required>
+            </div>
+
+            <div class="col-md-4">
+                <label class="form-label">Primary Colour</label>
+                <input class="form-control" name="primary_colour" placeholder="#000000" required>
+            </div>
+
+            <div class="col-md-4">
+                <label class="form-label">Secondary Colour</label>
+                <input class="form-control" name="secondary_colour" placeholder="#FFFFFF" required>
+            </div>
+
         </div>
-
-        <div class="col-md-4">
-            <label class="form-label">Primary Colour</label>
-            <input class="form-control" name="primary_colour" placeholder="#000000" required>
+        <div class="pt-3 text-end">
+            <button class="btn green-btn">Save Branding</button>
         </div>
-
-        <div class="col-md-4">
-            <label class="form-label">Secondary Colour</label>
-            <input class="form-control" name="secondary_colour" placeholder="#FFFFFF" required>
-        </div>
-
-    </div>
-    <div class="pt-3 text-end">
-        <button class="btn green-btn">Save Branding</button>
-    </div>
-</form>
-{% endif %}
+    </form>
+    {% endif %}
 </div>
 
 
@@ -225,7 +223,6 @@
             <button class="btn red-btn">Delete Ticket</button>
         </form>
     </div>
-
 
     <form method="POST">
         <input type="hidden" name="action" value="update_ticket">
@@ -437,7 +434,6 @@
             </div>
         </form>
     </div>
-</div>
 </div>
 {% endif %}
 {% endif %}
