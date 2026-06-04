@@ -351,10 +351,11 @@
                 </select>
             </div>
 
-            {% if session.speaker_id %}
+            {% if session.speakers %}
             <div class="col-md-3">
                 <label class="form-label">Presentation Material</label>
-                <input type="text" class="form-control" name="file_path" placeholder="Enter file path/URL">
+                <input type="text" class="form-control" name="file_path" placeholder="Enter file path/URL"
+                    value="{{ session.materials[0].file_path }}">
             </div>
             {% endif %}
         </div>
@@ -406,13 +407,6 @@
                         {% endfor %}
                     </select>
                 </div>
-
-                {% if session.speakers %}
-                <div class="col-md-3">
-                    <label class="form-label">Presentation Material</label>
-                    <input type="text" class="form-control" name="file_path" placeholder="Enter file path/URL">
-                </div>
-                {% endif %}
             </div>
 
             <div class="pt-3 text-end">
