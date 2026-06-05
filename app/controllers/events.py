@@ -32,7 +32,7 @@ def index():
         
         return redirect(url_for('events.index'))
     
-    all_events = Event.query.all() 
+    all_events = Event.query.order_by(Event.event_start.asc()).all() 
     return render_template('events.html', all_events=all_events)
 
 @events_bp.route('/manage-event', methods=('GET', 'POST'))

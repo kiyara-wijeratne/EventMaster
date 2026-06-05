@@ -3,5 +3,84 @@
 {% block page_title %}Dashboard{% endblock %}
 
 {% block content %}
+<div class="fluid-container pt-3">
+    <div class="row mb-5">
+        <div class="col-md-5 col-lg-4">
+            <div class="card">
+                <div class="card-body p-4">
+                    <h2 class="card-title title">{{ total_attendees }}</h2>
+                    <p class="card-text">Attendees</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-5 col-lg-4">
+            <div class="card">
+                <div class="card-body p-4">
+                    <h2 class="card-title title">£{{ revenue }}</h2>
+                    <p class="card-text">Revenue</p>
+                </div>
+            </div>
+        </div>
+    </div>
 
+    <h2 class="fw-bold title m-0">Upcoming Events</h2>
+    <div class="table-responsive pt-3">
+        <table class="table">
+            <thead>
+                <tr>
+                    <th class="table-heading" scope="col">Name</th>
+                    <th class="table-heading" scope="col">Date</th>
+                    <th class="table-heading" scope="col">Pending Tasks</th>
+                    {% if current_user.role.name == 'Organiser' %}
+                    <th class="table-heading" scope="col">Actions</th>
+                    {%endif%}
+                </tr>
+            </thead>
+            <tbody>
+                {% for event in all_events %}
+                <tr>
+                    <td>{{ event.title }}</td>
+                    <td>{{ event.event_start }}</td>
+                    <td>
+                        {% set tasks = [] %}
+                        {% if not event.branding %}
+                        {% set _ = tasks.append('Add Branding') %}
+                        {% endif %}
+                        {% if not event.ticket_types %}
+                        {% set _ = tasks.append('Add Ticket Types') %}
+                        {% endif %}
+                        {% if not event.sessions %}
+                        {% set _ = tasks.append('Add Sessions') %}
+                        {% endif %}
+                        {% if tasks %}
+                        <ul>
+                            {% for task in tasks %}
+                            <li>{{ task }}</li>
+                            {% endfor %}
+                        </ul>
+                        {%endif%}
+
+                    </td>
+                    {% if current_user.role.name == 'Organiser' %}
+                    <td>
+                        {% if event.organiser_id == current_user.id %}
+                        <a class="btn green-btn" href="{{url_for('events.manage_event', event_id=event.id)}}"
+                            role="button">Edit</a>
+                        <div class="pt-3">
+                            <form method="POST" action="{{ url_for('events.index') }}"
+                                onsubmit="return confirm('Are you sure you want to completely delete this event? \nThis action cannot be undone.');">
+                                <input type="hidden" name="event_id" value="{{ event.id }}">
+                                <button type="submit" class="btn red-btn">Delete</button>
+                            </form>
+                        </div>
+
+                        {%endif%}
+                    </td>
+                    {%endif%}
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
 {% endblock %}
