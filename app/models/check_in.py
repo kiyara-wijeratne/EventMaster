@@ -17,9 +17,9 @@ class CheckIn(db.Model):
                            coordinator_id=coordinator_id)
             
         db.session.add(check_in)
-        db.commit()
+        db.session.commit()
         return check_in
     
     @classmethod
-    def get_by_registation_id(cls, registration_id):
-        return db.session.execute(db.select(cls).filter_by(registration_id=registration_id)).scalar_one_or_none
+    def get_by_registration_id(cls, registration_id):
+        return db.session.execute(db.select(cls).filter_by(registration_id=registration_id)).scalar_one_or_none()

@@ -58,7 +58,8 @@ class Registration(db.Model):
                            ticket_type_id=ticket_type_id,
                            attendee_id=attendee_id,
                            payment_status=payment_status,
-                           approval_status=status)
+                           approval_status=status,
+                           special_requests=special_requests)
         
         db.session.add(registration)
         db.session.commit()
@@ -78,7 +79,7 @@ class Registration(db.Model):
         event = Event.get_by_id(self.event_id)
             
         if not event.has_available_capacity():
-            raise ValueError("Cannot approve this registration."
+            raise ValueError("Cannot approve this registration. "
                             f"{event.title} is already at full capacity.")
         
         self.approval_status = "Approved"
@@ -88,6 +89,16 @@ class Registration(db.Model):
         # email attendee to confirm approval
         
         return self
+    
+    @classmethod    
+    def get_attendees(cls, status, filter_event_id=None):
+        
+        query = db.select(cls).filter_by(approval_status=status)
+        
+        if filter_event_id:
+            query = query.filter_by(event_id=filter_event_id)
+            
+        return db.session.execute(query.order_by(cls.id.desc())).scalars().all()
     
     def waitlist(self):
         # validate attendee is not already approved 

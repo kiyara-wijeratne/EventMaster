@@ -29,11 +29,11 @@
                                 href="{{ url_for('events.index') }}">Events</a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link {% if request.endpoint == 'registrations.index' %} active-nav-link {% else %} hover-nav-link {% endif %}"
-                                href="{{ url_for('registrations.index') }}">Registrations</a>
+                            <a class="nav-link {% if request.blueprint == 'registrations' %} active-nav-link {% else %} hover-nav-link {% endif %}"
+                                href="{{ url_for('registrations.attendee_list') }}">Registrations</a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link {% if request.endpoint == 'speakers.index' %} active-nav-link {% else %} hover-nav-link {% endif %}"
+                            <a class="nav-link {% if request.blueprint == 'speakers' %} active-nav-link {% else %} hover-nav-link {% endif %}"
                                 href="{{ url_for('speakers.index') }}">Speakers</a>
                         </li>
                         <li class="nav-item">

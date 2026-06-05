@@ -3,5 +3,198 @@
 {% block page_title %}Registrations{% endblock %}
 
 {% block content %}
+<div class="container-fluid p-0">
 
+    <ul class="nav nav-underline pt-3">
+        <li class="nav-item">
+            <a class="nav-link {% if request.endpoint == 'registrations.attendee_list' %} active active-nav-link {% endif %}"
+                href="{{ url_for('registrations.attendee_list') }}">
+                Attendee List
+            </a>
+        </li>
+        {% if current_user.role.name == 'Coordinator' %}
+        <li class="nav-item">
+            <a class="nav-link {% if request.endpoint == 'registrations.check_in_queue' %} active active-nav-link {% endif %}"
+                href="{{ url_for('registrations.check_in_queue') }}">
+                Check In Queue
+            </a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link {% if request.endpoint == 'registrations.pending_approval' %} active active-nav-link {% endif %}"
+                href="{{ url_for('registrations.pending_approval') }}">
+                Pending Approval
+            </a>
+        </li>
+        {% endif %}
+    </ul>
+</div>
+
+{% if request.endpoint == 'registrations.attendee_list' %}
+<div class="fluid-container pt-3">
+
+    <form method="GET" action="{{ url_for('registrations.attendee_list') }}">
+        <div class="form-group row">
+            <div class="col-md-4">
+                <label class="form-label">Filter by Event</label>
+                <select name="event_id" class="form-select" onchange="this.form.submit()">
+                    <option value="">All Events</option>
+                    {% for event in all_events %}
+                    <option value="{{ event.id }}" {% if event_id==event.id %}selected{% endif %}>
+                        {{ event.title }}
+                    </option>
+                    {% endfor %}
+                </select>
+            </div>
+        </div>
+    </form>
+
+    <div class="table-responsive pt-3">
+        <table class="table">
+            <thead>
+                <tr>
+                    <th class="table-heading" scope="col">Attendee Name</th>
+                    <th class="table-heading" scope="col">Email</th>
+                    <th class="table-heading" scope="col">Event</th>
+                    <th class="table-heading" scope="col">Ticket Type</th>
+                    <th class="table-heading" scope="col">Payment Status</th>
+                    <th class="table-heading" scope="col">Special Request</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for registration in approved_attendees %}
+                <tr>
+                    <td>{{ registration.attendee.full_name }}</td>
+                    <td>{{ registration.attendee.email }}</td>
+                    <td>{{ registration.event.title }}</td>
+                    <td>{{ registration.ticket_type.name }}</td>
+                    <td>{{ registration.payment_status}}</td>
+                    <td>{{ registration.special_requests}}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+{% endif %}
+{% if request.endpoint == 'registrations.check_in_queue' %}
+<div class="fluid-container pt-3">
+
+    <form method="GET" action="{{ url_for('registrations.check_in_queue') }}">
+        <div class="form-group row">
+            <div class="col-md-4">
+                <label class="form-label">Filter by Event</label>
+                <select name="event_id" class="form-select" onchange="this.form.submit()">
+                    <option value="">All Events</option>
+                    {% for event in all_events %}
+                    <option value="{{ event.id }}" {% if event_id==event.id %}selected{% endif %}>
+                        {{ event.title }}
+                    </option>
+                    {% endfor %}
+                </select>
+            </div>
+        </div>
+    </form>
+
+    <div class="table-responsive pt-3">
+        <table class="table">
+            <thead>
+                <tr>
+                    <th class="table-heading" scope="col">Attendee Name</th>
+                    <th class="table-heading" scope="col">Email</th>
+                    <th class="table-heading" scope="col">Event</th>
+                    <th class="table-heading" scope="col">Ticket Type</th>
+                    <th class="table-heading" scope="col">Special Request</th>
+                    <th class="table-heading text-center" scope="col">Action</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for registration in approved_attendees %}
+                <tr>
+                    <td>{{ registration.attendee.full_name }}</td>
+                    <td>{{ registration.attendee.email }}</td>
+                    <td>{{ registration.event.title }}</td>
+                    <td>{{ registration.ticket_type.name }}</td>
+                    <td>{{ registration.special_requests or 'None' }}</td>
+
+                    <td class="text-center">
+                        {% if not registration.check_in %}
+                        <form method="POST" action="{{ url_for('registrations.check_in_queue') }}">
+                            <input type="hidden" name="registration_id" value="{{ registration.id }}">
+                            <input type="hidden" name="event_id" value="{{ event_id or '' }}">
+                            <button type="submit" class="btn green-btn">Check In</button>
+                        </form>
+                        {% else %}
+                        <p>Checked In</p>
+                        {% endif %}
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+{% endif %}
+{% if request.endpoint == 'registrations.pending_approval' %}
+<div class="fluid-container pt-3">
+
+    <form method="GET" action="{{ url_for('registrations.pending_approval') }}">
+        <div class="form-group row">
+            <div class="col-md-4">
+                <label class="form-label">Filter by Event</label>
+                <select name="event_id" class="form-select" onchange="this.form.submit()">
+                    <option value="">All Events</option>
+                    {% for event in all_events %}
+                    <option value="{{ event.id }}" {% if event_id==event.id %}selected{% endif %}>
+                        {{ event.title }}
+                    </option>
+                    {% endfor %}
+                </select>
+            </div>
+        </div>
+    </form>
+
+    <div class="table-responsive pt-3">
+        <table class="table">
+            <thead>
+                <tr>
+                    <th class="table-heading" scope="col">Attendee Name</th>
+                    <th class="table-heading" scope="col">Email</th>
+                    <th class="table-heading" scope="col">Event</th>
+                    <th class="table-heading" scope="col">Ticket Type</th>
+                    <th class="table-heading" scope="col">Payment Status</th>
+                    <th class="table-heading text-center" scope="col">Action</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for registration in waitlisted_attendees %}
+                <tr>
+                    <td>{{ registration.attendee.full_name }}</td>
+                    <td>{{ registration.attendee.email }}</td>
+                    <td>{{ registration.event.title }}</td>
+                    <td>{{ registration.ticket_type.name }}</td>
+                    <td>{{ registration.payment_status }}</td>
+                    <td class="text-center">
+                        <form method="POST" action="{{ url_for('registrations.pending_approval') }}" class="m-0">
+                            <input type="hidden" name="registration_id" value="{{ registration.id }}">
+                            <input type="hidden" name="event_id" value="{{ event_id or '' }}">
+                            <button type="submit" class="btn green-btn">Approve</button>
+                        </form>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+
+{% endif %}
+<div class="pt-3">
+    {% with messages = get_flashed_messages(with_categories=true) %}
+    {% if messages %}
+    {% for category, message in messages %}
+    <p class="{{ category }} small">{{ message }}</p>
+    {% endfor %}
+    {% endif %}
+    {% endwith %}
+</div>
 {% endblock %}
