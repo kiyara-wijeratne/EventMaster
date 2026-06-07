@@ -105,4 +105,4 @@ class Event(db.Model):
                              "You must cancel all attendee registrations before deleting the event.")
             
         db.session.delete(self)
-        db.session.commit()
+        db.session.commit()    
