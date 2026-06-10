@@ -134,7 +134,7 @@
 
 {% if event %}
 
-<div class="fluid-cotainer pt-3">
+<div class="fluid-container pt-3">
     <div class="d-flex justify-content-between align-items-center">
         <h3 class="title">Branding</h3>
         {% if event_branding %}
@@ -142,7 +142,9 @@
             <input type="hidden" name="action" value="delete_branding">
             <button class="btn red-btn text-end">Delete Branding</button>
         </form>
+        {%endif%}
     </div>
+    {% if evnet_branding %}
     <form method="POST">
         <input type="hidden" name="action" value="update_branding">
 
@@ -193,6 +195,7 @@
             </div>
 
         </div>
+
         <div class="pt-3 text-end">
             <button class="btn green-btn">Save Branding</button>
         </div>
