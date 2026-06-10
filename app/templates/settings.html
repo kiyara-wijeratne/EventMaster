@@ -46,6 +46,11 @@
                     value="{{ current_user.role.name }}">
             </div>
         </div>
+
+        <div class="pt-3">
+            <a href="{{ url_for('auth.logout') }}" class="btn btn-sm green-btn">Logout</a>
+        </div>
+
     </form>
     {% endif %}
 

@@ -1,5 +1,5 @@
 from functools import wraps 
-from flask import Blueprint, flash, redirect, render_template, request, url_for, abort
+from flask import Blueprint, flash, redirect, render_template, request, url_for, abort, session
 from flask_login import current_user, login_user
 from app.models.user import User
 
@@ -20,6 +20,11 @@ def login():
             flash('Invalid email or password. Please try again.', 'error')
             
     return render_template('auth/login.html')
+
+@bp.route('/logout')
+def logout():
+    session.clear()
+    return redirect(url_for('auth.login'))
 
 def role_required(*roles):
     def wrapper(func):
