@@ -218,7 +218,7 @@
 <div class="fluid-container pt-3">
     <h3 class="title">Ticket Types</h3>
     {% for ticket in event.ticket_types %}
-    <div class="d=flex justify-content-end text-end">
+    <div class="d-flex justify-content-end text-end">
         <form method="POST">
             <input type="hidden" name="action" value="delete_ticket">
             <input type="hidden" name="ticket_id" value="{{ ticket.id }}">
@@ -318,7 +318,7 @@
 <div class="fluid-container pt-3">
     <h3 class="title">Sessions</h3>
     {% for session in event.sessions %}
-    <div class="d=flex justify-content-end text-end">
+    <div class="d-flex justify-content-end text-end">
         <form method="POST" class="pt-3 text-end">
             <input type="hidden" name="action" value="delete_session">
             <input type="hidden" name="session_id" value="{{ session.id }}">
@@ -355,8 +355,8 @@
             <div class="col-md-3">
                 <label class="form-label">Speaker</label>
                 <select class="form-select" name="speaker_id">
-                    {% for speaker in all_speakers %}
                     <option value="">Select Speaker (None)</option>
+                    {% for speaker in all_speakers %}
                     <option value="{{ speaker.id }}" {% if session.speakers and session.speakers[0].id==speaker.id %}
                         selected {% endif %}>
                         {{ speaker.full_name }}
@@ -369,7 +369,7 @@
             <div class="col-md-3">
                 <label class="form-label">Presentation Material</label>
                 <input type="text" class="form-control" name="file_path" placeholder="Enter file path/URL"
-                    value="{{ session.materials[0].file_path }}">
+                    value="{{ session.materials[0].file_path if session.materials else '' }}">
             </div>
             {% endif %}
         </div>
@@ -391,7 +391,7 @@
         <form method="POST">
             <input type="hidden" name="action" value="create_session">
 
-            <div class="from-group row">
+            <div class="form-group row">
                 <div class="col-md-3">
                     <label class="form-label">Title</label>
                     <input class="form-control" name="title" placeholder="Session Title" required>
@@ -412,7 +412,7 @@
                     <input type="datetime-local" class="form-control" name="session_end" required>
                 </div>
 
-                <div class="cold-md-3">
+                <div class="col-md-3">
                     <label class="form-label">Assign Speaker</label>
                     <select class="form-select" name="speaker_id">
                         <option value="">Select Speaker (None)</option>
@@ -424,7 +424,7 @@
             </div>
 
             <div class="pt-3 text-end">
-                {% if event.session %}
+                {% if event.sessions %}
                 <button type="button" class="btn red-btn"
                     onclick="document.getElementById('create_session_section').style.display='none'; document.getElementById('show-session-form-btn').style.display='inline-block';">Cancel</button>
                 {%endif%}

@@ -62,7 +62,6 @@ def manage_event():
                 event = save_event(event)
 
                 flash("Event saved successfully!", "success")
-                return redirect(url_for("events.index"))
 
             elif action == "create_branding":
                 create_branding(event)
@@ -101,7 +100,6 @@ def manage_event():
                 flash("Session deleted successfully!", "success")
 
             if event:
-                # redirect so user can continue editing
                 return redirect(url_for("events.manage_event", event_id=event.id))
             else:
                 return redirect(url_for("events.index"))
@@ -249,44 +247,55 @@ def update_session():
         new_speaker = request.form.get("speaker_id")
         new_speaker_id = int(new_speaker) if new_speaker else None
 
+        # check if speaker was changed
+        current_speaker_id = session.speakers[0].id if session.speakers else None
+
+        # speaker changed
+        speaker_changed = new_speaker_id != current_speaker_id
+        if speaker_changed:
+            # remove old speaker
+            # removed linked presentation mateiral too
+            if current_speaker_id:
+                session.remove_speaker(current_speaker_id)
+
+            # add new speaker
+            if new_speaker_id:
+                session.add_speaker(new_speaker_id)
+
         if new_speaker_id:
-            # check if speaker was changed
-            current_speaker_id = session.speakers[0].id if session.speakers else None
-
-            # speaker changed
-            speaker_changed = new_speaker_id != current_speaker_id
-            if speaker_changed:
-                # remove old speaker
-                # removed linked presentation mateiral too
-                if current_speaker_id:
-                    session.remove_speaker(current_speaker_id)
-
-                # add new speaker
-                if new_speaker_id:
-                    session.add_speaker(new_speaker_id)
-
             # if speaker assigned, presentation materials can be managed
             file_path = request.form.get("file_path")
 
-            # check if presentation materials already exist
-            existing_materials = PresentationMaterial.get_by_session_id(session.id)
-            existing_material = existing_materials[0] if existing_materials else None
-
-            if file_path:
-                # if they provided a path, and the speaker didn't change, UPDATE
-                if existing_material and not speaker_changed:
-                    existing_material.update(file_path=file_path)
-                else:
-                    # else (new speaker or no previous material), CREATE
+            if speaker_changed:
+                if file_path:
+                    # new speaker, CREATE
                     PresentationMaterial.create(
                         speaker_id=new_speaker_id,
                         session_id=session.id,
                         file_path=file_path,
                     )
             else:
-                # if file_path text box blank, DELETE
-                if existing_material:
-                    existing_material.delete()
+                # check if presentation materials already exist
+                existing_materials = PresentationMaterial.get_by_session_id(session.id)
+                existing_material = (
+                    existing_materials[0] if existing_materials else None
+                )
+
+                if file_path:
+                    # if they provided a path, and the speaker didn't change, UPDATE
+                    if existing_material:
+                        existing_material.update(file_path=file_path)
+                    else:
+                        # no previous material, CREATE
+                        PresentationMaterial.create(
+                            speaker_id=new_speaker_id,
+                            session_id=session.id,
+                            file_path=file_path,
+                        )
+                else:
+                    # if file_path text box blank, DELETE
+                    if existing_material:
+                        existing_material.delete()
 
 
 def delete_session():
