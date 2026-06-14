@@ -18,10 +18,14 @@ def seed_db(app):
 
     with app.app_context():
 
-        # creat clean database
-
-        db.drop_all()
+        # create clean database (only if it doesn't already exist)
         db.create_all()
+
+        # skips seeding if already seeded
+        existing_role = db.session.execute(db.select(Role)).first()
+        if existing_role is not None:
+            print("database already seeded")
+            return
 
         # create roles
         administrator = Role.create(name="Administrator")
