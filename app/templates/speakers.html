@@ -1,3 +1,13 @@
+<!--
+    adapted from:
+    https://www.geeksforgeeks.org/python/template-inheritance-in-flask/
+    https://getbootstrap.com/docs/5.3/getting-started/introduction/
+    https://getbootstrap.com/docs/5.3/components/card/
+    https://getbootstrap.com/docs/5.3/forms/form-control/
+    https://getbootstrap.com/docs/5.3/components/buttons/
+    https://flask.palletsprojects.com/en/stable/patterns/flashing/
+-->
+
 {% extends "base.html" %}
 
 {% block page_title %}Speakers{% endblock %}
@@ -11,29 +21,29 @@
 {% endif %}
 {% for speaker in all_speakers %}
 <div class="fluid-container pt-3">
-<div class="card mb-3" style="max-width: 540px;">
-    {% if current_user.role.name == 'Organiser' %}
-    <div class="d-flex justify-content-end align-items-start py-2 px-2">
-        <a class="btn btn-sm green-btn" href="{{url_for('speakers.manage_speaker', speaker_id=speaker.id)}}"
-            role="button">Edit</a>
-    </div>
-    {% endif %}
-    <div class="row g-0">
-        <div class="col-md-4">
-            <img src="" class="img-fluid rounded-start" alt="{{speaker.full_name}}">
+    <div class="card mb-3" style="max-width: 540px;">
+        {% if current_user.role.name == 'Organiser' %}
+        <div class="d-flex justify-content-end align-items-start py-2 px-2">
+            <a class="btn btn-sm green-btn" href="{{url_for('speakers.manage_speaker', speaker_id=speaker.id)}}"
+                role="button">Edit</a>
         </div>
-        <div class="col-md-8">
-            <div class="card-body">
-                <h5 class="card-title title">{{speaker.full_name}}</h5>
-                <p class="card-text">{{speaker.biography}}</p>
-                <p class="card-text">
-                    <small class="text-muted d-block">Email: {{speaker.email}}</small>
-                    <small class="text-muted d-block">Phone number: {{speaker.phone_number}}</small>
-                </p>
+        {% endif %}
+        <div class="row g-0">
+            <div class="col-md-4">
+                <img src="" class="img-fluid rounded-start" alt="{{speaker.full_name}}">
+            </div>
+            <div class="col-md-8">
+                <div class="card-body">
+                    <h5 class="card-title title">{{speaker.full_name}}</h5>
+                    <p class="card-text">{{speaker.biography}}</p>
+                    <p class="card-text">
+                        <small class="text-muted d-block">Email: {{speaker.email}}</small>
+                        <small class="text-muted d-block">Phone number: {{speaker.phone_number}}</small>
+                    </p>
+                </div>
             </div>
         </div>
     </div>
-</div>
 </div>
 {% endfor %}
 {% endif %}

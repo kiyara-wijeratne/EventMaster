@@ -1,8 +1,16 @@
-{% extends "base.html" %}
+<!--
+    adapted from:
+    https://www.geeksforgeeks.org/python/template-inheritance-in-flask/
+    https://getbootstrap.com/docs/5.3/getting-started/introduction/
+    https://getbootstrap.com/docs/5.3/components/card/
+    https://getbootstrap.com/docs/5.3/content/tables/
+    https://getbootstrap.com/docs/5.3/forms/form-control/
+    https://stackoverflow.com/questions/6515502/javascript-form-submit-confirm-or-cancel-submission-dialog-box
+    https://getbootstrap.com/docs/5.3/components/buttons/
+-->
 
-{% block page_title %}Dashboard{% endblock %}
-
-{% block content %}
+{% extends "base.html" %} {% block page_title %}Dashboard{% endblock %} {% block
+content %}
 <div class="fluid-container pt-3">
     <div class="row mb-5">
         <div class="col-md-5 col-lg-4">
@@ -42,24 +50,17 @@
                     <td>{{ event.title }}</td>
                     <td>{{ event.event_start }}</td>
                     <td>
-                        {% set tasks = [] %}
-                        {% if not event.branding %}
-                        {% set _ = tasks.append('Add Branding') %}
-                        {% endif %}
-                        {% if not event.ticket_types %}
-                        {% set _ = tasks.append('Add Ticket Types') %}
-                        {% endif %}
-                        {% if not event.sessions %}
-                        {% set _ = tasks.append('Add Sessions') %}
-                        {% endif %}
-                        {% if tasks %}
+                        {% set tasks = [] %} {% if not event.branding %} {% set _ =
+                        tasks.append('Add Branding') %} {% endif %} {% if not
+                        event.ticket_types %} {% set _ = tasks.append('Add Ticket Types') %}
+                        {% endif %} {% if not event.sessions %} {% set _ = tasks.append('Add
+                        Sessions') %} {% endif %} {% if tasks %}
                         <ul>
                             {% for task in tasks %}
                             <li>{{ task }}</li>
                             {% endfor %}
                         </ul>
                         {%endif%}
-
                     </td>
                     {% if current_user.role.name == 'Organiser' %}
                     <td>
@@ -69,7 +70,7 @@
                         <div class="pt-3">
                             <form method="POST" action="{{ url_for('events.index') }}"
                                 onsubmit="return confirm('Are you sure you want to completely delete this event? \nThis action cannot be undone.');">
-                                <input type="hidden" name="event_id" value="{{ event.id }}">
+                                <input type="hidden" name="event_id" value="{{ event.id }}" />
                                 <button type="submit" class="btn red-btn">Delete</button>
                             </form>
                         </div>
